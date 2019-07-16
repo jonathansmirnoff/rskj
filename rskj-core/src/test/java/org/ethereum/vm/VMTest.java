@@ -69,7 +69,6 @@ public class VMTest {
     private final BlockFactory blockFactory = new BlockFactory(config.getActivationConfig());
     private final VmConfig vmConfig = config.getVmConfig();
     private final PrecompiledContracts precompiledContracts = new PrecompiledContracts(config, null);
-
 //    private final RskSystemProperties {
 //        config = new RskSystemProperties();
 //    }
@@ -185,7 +184,8 @@ public class VMTest {
                         " PUSH1 0x00" +
                         " PUSH20 0x" + invoke.getContractAddress() +
                         " PUSH4 0x005B8D80" +
-                        " STATICCALL"));
+                        " STATICCALL"
+        ));
 
         program.fullTrace();
         vm.steps(program, Long.MAX_VALUE);
