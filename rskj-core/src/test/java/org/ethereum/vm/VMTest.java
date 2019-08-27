@@ -48,8 +48,10 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 
+import static java.lang.StrictMath.exp;
 import static java.lang.StrictMath.min;
 import static org.ethereum.util.ByteUtil.oneByteToHexString;
+import static org.ethereum.util.ByteUtil.toHexString;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
