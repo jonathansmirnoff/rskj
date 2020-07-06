@@ -83,4 +83,7 @@ public class RemascTransaction extends Transaction {
         return true;
     }
 
-}
+    @Override
+    public boolean hasToComputeSender(Map<Transaction, RskAddress> addressesCache) {
+        return false;
+    }

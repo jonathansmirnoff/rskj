@@ -567,4 +567,8 @@ public class Transaction {
                 BigInteger.ZERO.equals(new BigInteger(1, getGasLimit())) &&
                 Coin.ZERO.equals(getGasPrice());
     }
-}
+
+    public boolean hasToComputeSender(Map<Transaction, RskAddress> addressesCache) {
+        RskAddress sender = addressesCache.get(this);
+        return sender == null;
+    }

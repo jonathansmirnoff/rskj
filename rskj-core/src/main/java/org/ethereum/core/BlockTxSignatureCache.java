@@ -59,7 +59,7 @@ public class BlockTxSignatureCache extends SignatureCache {
     @Override
     public void storeSender(Transaction transaction) {
 
-        if (!hasToComputeSender(transaction)) {
+        if (!transaction.hasToComputeSender(addressesCache)) {
             return;
         }
 

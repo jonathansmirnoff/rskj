@@ -34,13 +34,4 @@ public abstract class SignatureCache {
     }
 
     public abstract void storeSender(Transaction tx);
-
-    protected boolean hasToComputeSender(Transaction transaction) {
-        if (transaction instanceof RemascTransaction) {
-            return false;
-        }
-
-        RskAddress sender = addressesCache.get(transaction);
-        return sender == null;
-    }
 }
