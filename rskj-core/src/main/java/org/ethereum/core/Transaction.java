@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.security.SignatureException;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.ethereum.util.ByteUtil.EMPTY_BYTE_ARRAY;
@@ -572,3 +573,29 @@ public class Transaction {
         RskAddress sender = addressesCache.get(this);
         return sender == null;
     }
+
+    public RskAddress getSenderForSignatureCache(Map<Transaction, RskAddress> addressesCache) {
+        RskAddress address = addressesCache.get(this);
+
+        if (address == null) {
+            return getSender();
+        }
+
+        return address;
+    }
+
+    public RskAddress getSenderForSignatureCache(Map<Transaction, RskAddress> addressesCache, SignatureCache internalCache) {
+        RskAddress address = addressesCache.get(this);
+        if (address != null) {
+            return address;
+        }
+
+        if (internalCache.containsTx(this)) {
+            RskAddress sender = internalCache.getSender(this);
+            addressesCache.put(this, sender);
+            return sender;
+        }
+
+        return getSender();
+    }
+}

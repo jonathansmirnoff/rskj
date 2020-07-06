@@ -21,9 +21,12 @@ package co.rsk.remasc;
 import co.rsk.core.RskAddress;
 import org.ethereum.config.Constants;
 import org.ethereum.config.blockchain.upgrades.ActivationConfig;
+import org.ethereum.core.SignatureCache;
 import org.ethereum.core.Transaction;
 import org.ethereum.util.ByteUtil;
 import org.ethereum.vm.PrecompiledContracts;
+
+import java.util.Map;
 
 import static org.ethereum.rpc.TypeConverter.toUnformattedJsonHex;
 
@@ -87,3 +90,14 @@ public class RemascTransaction extends Transaction {
     public boolean hasToComputeSender(Map<Transaction, RskAddress> addressesCache) {
         return false;
     }
+
+    @Override
+    public RskAddress getSenderForSignatureCache(Map<Transaction, RskAddress> addressesCache) {
+        return RemascTransaction.REMASC_ADDRESS;
+    }
+
+    @Override
+    public RskAddress getSenderForSignatureCache(Map<Transaction, RskAddress> addressesCache, SignatureCache internalCache) {
+        return RemascTransaction.REMASC_ADDRESS;
+    }
+}

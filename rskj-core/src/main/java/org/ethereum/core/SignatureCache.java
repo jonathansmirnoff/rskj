@@ -29,9 +29,9 @@ public abstract class SignatureCache {
 
     public abstract RskAddress getSender(Transaction transaction);
 
+    public abstract void storeSender(Transaction tx);
+
     public boolean containsTx(Transaction transaction) {
         return addressesCache.containsKey(transaction);
     }
-
-    public abstract void storeSender(Transaction tx);
 }
