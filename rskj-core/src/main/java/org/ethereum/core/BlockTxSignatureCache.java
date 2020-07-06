@@ -53,4 +53,9 @@ public class BlockTxSignatureCache extends SignatureCache {
 
         addressesCache.put(transaction, transaction.getSender());
     }
+
+    @Override
+    public SignatureCache getInternalCache() {
+        return internalCache;
+    }
 }

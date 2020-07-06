@@ -45,4 +45,9 @@ public class ReceivedTxSignatureCache extends SignatureCache {
 
         addressesCache.put(transaction, transaction.getSender());
     }
+
+    @Override
+    public SignatureCache getInternalCache() {
+        return null;
+    }
 }

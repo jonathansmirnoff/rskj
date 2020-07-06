@@ -118,7 +118,7 @@ public class TransactionExecutorTest {
 
         when(repository.getNonce(sender)).thenReturn(BigInteger.valueOf(1L));
         when(repository.getBalance(sender)).thenReturn(new Coin(BigInteger.valueOf(68000L)));
-        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value);
+        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
 
         assertTrue(executeValidTransaction(transaction, blockTxSignatureCache));
         assertTrue(blockTxSignatureCache.containsTx(transaction));
@@ -127,7 +127,7 @@ public class TransactionExecutorTest {
 
     @Test
     public void TwoTxsAreInBlockAndThemShouldBeContainedInCache(){
-        ReceivedTxSignatureCache receivedTxSignatureCache = mock(ReceivedTxSignatureCache.class);
+        ReceivedTxSignatureCache receivedTxSignatureCache = new ReceivedTxSignatureCache();
         BlockTxSignatureCache blockTxSignatureCache = new BlockTxSignatureCache(receivedTxSignatureCache);
         MutableRepository cacheTrack = mock(MutableRepository.class);
         when(repository.startTracking()).thenReturn(cacheTrack);
@@ -142,13 +142,13 @@ public class TransactionExecutorTest {
 
         when(repository.getNonce(sender)).thenReturn(BigInteger.valueOf(1L));
         when(repository.getBalance(sender)).thenReturn(new Coin(BigInteger.valueOf(68000L)));
-        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value);
+        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
 
         assertTrue(executeValidTransaction(transaction, blockTxSignatureCache));
 
         when(repository.getNonce(sender2)).thenReturn(BigInteger.valueOf(1L));
         when(repository.getBalance(sender2)).thenReturn(new Coin(BigInteger.valueOf(68000L)));
-        Transaction transaction2 = getTransaction(sender2, receiver, gasLimit, txNonce, gasPrice, value);
+        Transaction transaction2 = getTransaction(sender2, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
 
         assertTrue(executeValidTransaction(transaction2, blockTxSignatureCache));
 
@@ -174,7 +174,7 @@ public class TransactionExecutorTest {
         Coin gasPrice = Coin.valueOf(1);
         Coin value = new Coin(BigInteger.valueOf(2));
 
-        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value);
+        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
         when(executionBlock.getGasLimit()).thenReturn(BigInteger.valueOf(6800000).toByteArray());
         when(repository.getNonce(sender)).thenReturn(BigInteger.valueOf(1L));
         when(repository.getBalance(sender)).thenReturn(new Coin(BigInteger.valueOf(0L)));
@@ -207,7 +207,7 @@ public class TransactionExecutorTest {
         Coin gasPrice = Coin.valueOf(1);
         Coin value = new Coin(BigInteger.valueOf(2));
 
-        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value);
+        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
         when(executionBlock.getGasLimit()).thenReturn(BigInteger.valueOf(6800000).toByteArray());
         when(repository.getNonce(sender)).thenReturn(BigInteger.valueOf(1L));
         when(repository.getBalance(sender)).thenReturn(new Coin(BigInteger.valueOf(0L)));
@@ -242,7 +242,7 @@ public class TransactionExecutorTest {
 
         when(repository.getNonce(sender)).thenReturn(BigInteger.valueOf(1L));
         when(repository.getBalance(sender)).thenReturn(new Coin(BigInteger.valueOf(68000L)));
-        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value);
+        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
         when(receivedTxSignatureCache.getSender(transaction)).thenReturn(sender);
         when(receivedTxSignatureCache.containsTx(transaction)).thenReturn(true);
 
@@ -269,7 +269,7 @@ public class TransactionExecutorTest {
 
         when(repository.getNonce(sender)).thenReturn(BigInteger.valueOf(1L));
         when(repository.getBalance(sender)).thenReturn(new Coin(BigInteger.valueOf(68000L)));
-        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value);
+        Transaction transaction = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
         assertTrue(executeValidTransaction(transaction, blockTxSignatureCache));
 
         for (int i = 0; i < MAX_CACHE_SIZE; i++) {
@@ -279,7 +279,7 @@ public class TransactionExecutorTest {
             sender = new RskAddress(TestUtils.randomAddress().getBytes());
             when(repository.getNonce(sender)).thenReturn(BigInteger.valueOf(1L));
             when(repository.getBalance(sender)).thenReturn(new Coin(BigInteger.valueOf(68000L)));
-            Transaction transactionAux = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value);
+            Transaction transactionAux = getTransaction(sender, receiver, gasLimit, txNonce, gasPrice, value, blockTxSignatureCache);
             assertTrue(executeValidTransaction(transactionAux, blockTxSignatureCache));
         }
 
@@ -300,7 +300,7 @@ public class TransactionExecutorTest {
         return txExecutor.executeTransaction();
     }
 
-    private Transaction getTransaction(RskAddress sender, RskAddress receiver, byte[] gasLimit, byte[] txNonce, Coin gasPrice, Coin value) {
+    private Transaction getTransaction(RskAddress sender, RskAddress receiver, byte[] gasLimit, byte[] txNonce, Coin gasPrice, Coin value, SignatureCache signatureCache) {
         Transaction transaction = mock(Transaction.class);
         when(transaction.getSender()).thenReturn(sender);
         when(transaction.getGasPrice()).thenReturn(gasPrice);
@@ -310,6 +310,9 @@ public class TransactionExecutorTest {
         when(transaction.getReceiveAddress()).thenReturn(receiver);
         when(transaction.acceptTransactionSignature(constants.getChainId())).thenReturn(true);
         when(transaction.getValue()).thenReturn(value);
+        when(transaction.getSenderForSignatureCache(signatureCache.getAddressesCache())).thenCallRealMethod();
+        when(transaction.getSenderForSignatureCache(signatureCache.getAddressesCache(), signatureCache.getInternalCache())).thenCallRealMethod();
+        when(transaction.hasToComputeSender(signatureCache.getAddressesCache())).thenCallRealMethod();
         return transaction;
     }
 }

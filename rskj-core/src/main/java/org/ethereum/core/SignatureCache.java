@@ -21,6 +21,7 @@ package org.ethereum.core;
 
 import co.rsk.core.RskAddress;
 import co.rsk.remasc.RemascTransaction;
+import com.google.common.annotations.VisibleForTesting;
 
 import java.util.Map;
 
@@ -34,4 +35,12 @@ public abstract class SignatureCache {
     public boolean containsTx(Transaction transaction) {
         return addressesCache.containsKey(transaction);
     }
+
+    @VisibleForTesting
+    public Map<Transaction, RskAddress> getAddressesCache() {
+        return addressesCache;
+    }
+
+    @VisibleForTesting
+    public abstract SignatureCache getInternalCache();
 }
