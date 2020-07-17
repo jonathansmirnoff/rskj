@@ -301,7 +301,8 @@ public class LightSyncProcessor {
         //End sync
     }
 
-    public void startFetchRound() {
+    public void startFetchRound(LightPeer lightPeer, List<BlockHeader> sparseHeaders, long targetNumber) {
+        setState(new FetchRoundSyncState(lightPeer, sparseHeaders, targetNumber, this));
         //Starting fetch sub chains
     }
 
